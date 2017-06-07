@@ -1,0 +1,129 @@
+﻿.AeroGlass {
+    position: relative;
+    display: inline-block;
+    min-width: 300px;
+    background-color: rgba(0,0,0,0.3);
+    box-shadow: 0 0 2px 2px black;
+    padding: 4px;
+    border: 2px white;
+    border-radius: 2px;
+    font-family: "微軟正黑體";
+}
+
+    .AeroGlass .title {
+        cursor: move;
+        display: inline;
+        margin-bottom: 2px;
+        text-shadow: 0 0 2px white;
+    }
+
+    .AeroGlass .content {
+        resize: both;
+        background-color: white;
+        overflow: scroll;
+    }
+
+    .AeroGlass .control_box {
+        border-style: solid;
+        border-width: 0px 1px 1px 1px;
+        border-color: black;
+        text-align: center;
+        position: absolute;
+        right: 4px;
+        top: 0px;
+        color: white;
+        text-shadow: 0 0 2px gray;
+        border-radius: 0 0 3px 3px;
+        //overflow:hidden;
+    }
+
+        .AeroGlass .control_box > .control {
+            background-color: rgba(0,0,0,0);
+            color: white;
+            text-align: center;
+            box-shadow: inset 0 0 2px 0px white;
+            border-style: solid;
+            border-width: 0px 1px 0px 0px;
+            border-color: black;
+            border-color: black;
+            display: inline-block;
+            width: 25px;
+            text-shadow: 0 0 3px #000000;
+        }
+
+            .AeroGlass .control_box > .control:hover {
+                box-shadow: 0 0 4px 3px lightblue;
+            }
+
+            .AeroGlass .control_box > .control:first-child {
+                border-radius: 0px 0px 0px 2px;
+            }
+
+            .AeroGlass .control_box > .control:last-child {
+                border-radius: 0px 0px 2px 0px;
+            }
+
+        .AeroGlass .control_box > .control {
+            width: 25px;
+            background-color: rgba(0,0,0,0);
+            color: white;
+            margin: 0px;
+            text-align: center;
+            box-shadow: inset 0 0 2px 0px white;
+            border-style: solid;
+            border-width: 0px 1px 0px 0px;
+            border-color: black;
+            border-color: black;
+            display: inline-block;
+            transition: box-shadow 0.3s,background 0.3s;
+            text-shadow: 0 0 3px #000000;
+        }
+
+        .AeroGlass .control_box > .close {
+            width: 50px;
+            border: none;
+            background: rgba(256,80,85,0.8);
+            box-shadow: none;
+            transition: box-shadow 0.3s,background 0.3s;
+        }
+
+            .AeroGlass .control_box > .close:hover {
+                box-shadow: 0 0 4px 3px red;
+                width: 50px;
+                border: none;
+                transition: background 0.5s
+                /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#d86363+10,d64f4f+16,ff0000+42,990000+42,b20000+61,c90000+91,d86363+100,d86363+100&0.3+1,0.3+1,1+37,1+75,0.3+100 */
+                background: -moz-linear-gradient(top, rgba(216,99,99,0.3) 1%, rgba(216,99,99,0.48) 10%, rgba(214,79,79,0.6) 16%, rgba(165,15,15,1) 37%, rgba(153,0,0,1) 42%, rgba(178,0,0,1) 61%, rgba(189,0,0,1) 75%, rgba(201,0,0,0.55) 91%, rgba(216,99,99,0.3) 100%); /* FF3.6-15 */
+                background: -webkit-linear-gradient(top, rgba(216,99,99,0.3) 1%,rgba(216,99,99,0.48) 10%,rgba(214,79,79,0.6) 16%,rgba(165,15,15,1) 37%,rgba(153,0,0,1) 42%,rgba(178,0,0,1) 61%,rgba(189,0,0,1) 75%,rgba(201,0,0,0.55) 91%,rgba(216,99,99,0.3) 100%); /* Chrome10-25,Safari5.1-6 */
+                background: linear-gradient(to bottom, rgba(216,99,99,0.3) 1%,rgba(216,99,99,0.48) 10%,rgba(214,79,79,0.6) 16%,rgba(165,15,15,1) 37%,rgba(153,0,0,1) 42%,rgba(178,0,0,1) 61%,rgba(189,0,0,1) 75%,rgba(201,0,0,0.55) 91%,rgba(216,99,99,0.3) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4dd86363', endColorstr='#4dd86363',GradientType=0 ); /* IE6-9 */
+            }
+
+            .AeroGlass .control_box > .close:active {
+                width: 50px;
+                border: none;
+                /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#e03800+14,6d0019+56,4f0000+75,874300+97,ffc405+100&0.78+0,0.89+56,0.84+100 */
+                background: -moz-linear-gradient(top, rgba(224,56,0,0.78) 0%, rgba(224,56,0,0.81) 14%, rgba(109,0,25,0.89) 56%, rgba(79,0,0,0.87) 75%, rgba(135,67,0,0.84) 97%, rgba(255,196,5,0.84) 100%); /* FF3.6-15 */
+                background: -webkit-linear-gradient(top, rgba(224,56,0,0.78) 0%,rgba(224,56,0,0.81) 14%,rgba(109,0,25,0.89) 56%,rgba(79,0,0,0.87) 75%,rgba(135,67,0,0.84) 97%,rgba(255,196,5,0.84) 100%); /* Chrome10-25,Safari5.1-6 */
+                background: linear-gradient(to bottom, rgba(224,56,0,0.78) 0%,rgba(224,56,0,0.81) 14%,rgba(109,0,25,0.89) 56%,rgba(79,0,0,0.87) 75%,rgba(135,67,0,0.84) 97%,rgba(255,196,5,0.84) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c7e03800', endColorstr='#d6ffc405',GradientType=0 ); /* IE6-9 */
+            }
+
+.WorkBar {
+    background: rgba(0, 0, 0, 0.70);
+    width: 100%;
+    height: 5%;
+    max-height: 300px;
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+}
+
+.container {
+    height: 95%;
+}
+
+.WorkBar > .item {
+    height: 100%;
+    width: auto;
+}
