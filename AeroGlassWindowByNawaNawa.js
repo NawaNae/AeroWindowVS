@@ -11,7 +11,6 @@ var loadJS = function (url, location) {
 window.onload = function ()
 {
     loadJS('Js/dragmoveByNawaNawa.js', document.querySelector('head'));
-    //addDragMove() 
     document.querySelector('head').innerHTML += '<link rel="stylesheet" href="AeroGlassWindow.css" type="text/css"/>';
 
 }
