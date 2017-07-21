@@ -1,0 +1,6 @@
+open 140.124.13.12
+t105590029
+s105590029
+prompt
+cd public_html/css
+mput AeroGlassByNawaNawa.css
