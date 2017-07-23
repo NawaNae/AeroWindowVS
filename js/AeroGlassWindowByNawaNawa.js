@@ -1,4 +1,48 @@
 // JavaScript source code
+/*AeroWindowContorl */
+var emptyIcon = "Images/file_empty.png";
+function AeroWindowControl(AeroWindow, WorkbarItem) {
+    this.ExecuteObj =
+        {
+            Window: AeroWindow,
+            WorkbarItem: WorkbarItem
+        };
+    this.handle = -1;
+    this.icon = "Images\file_empty.png";
+    this.title = "UnnamedPage";
+}
+AeroWindowControl.prototype.setHandle = function (hwnd) {
+    for (var i in this.ExecuteObj) {
+        this.ExecuteObj[i].dataset.handle = hwnd;
+    }
+    this.handle = hwnd;
+}
+AeroWindowControl.prototype.setTitles = function (title) {
+    this.ExecuteObj.Window.getElementsByClassName('title')[0].innerText = title;
+    this.ExecuteObj.WorkbarItem.getElementsByClassName('text')[0].innerText = title;
+}
+AeroWindowControl.prototype.updateTitles = function ()
+{
+    this.setTitles(this.title);
+}
+AeroWindowControl.prototype.setIcon = function (icon) {
+    this.ExecuteObj.Window.getElementsByTagName('img')[0].src = icon;
+    this.ExecuteObj.WorkbarItem.getElementsByTagName('img')[0].src = icon;
+}
+AeroWindowControl.prototype.updateicon = function () {
+    this.setIcon(this.icon);
+}
+function getStyle(elem, cssname) {
+    return window.getComputedStyle(elem, null).getPropertyValue(cssname);
+}
+function getWinCtrlByHwnd(hwnd)
+{
+    for (var i in WindowList)
+    {
+        if (WindowList[i].handle == hwnd)
+            return WindowList[i];
+    }
+}
 function isset(obj) {
     return !(typeof obj === 'undefined');
 }
