@@ -27,16 +27,12 @@ function WindowList_push(ControlObj)
 }
 function min_onClick()
 {
-    var AeroWindow = this.parentNode.parentNode.parentNode;
-    var content = AeroWindow.getElementsByClassName('content')[0];
-    if (!AeroWindow.classList.toggle('min'))/*min*/
-    {
-        AeroWindow.style.display = 'block';
-    }
-    else /*other state*/
-    {
-        AeroWindow.style.display = 'none';
-    }
+    var WindowCtrl = GetAncenstorAeroWindowCtrl(this);
+    if (!WindowCtrl.IsState('min'))
+        WindowCtrl.min();
+    else
+        WindowCtrl.deMin();
+    
 }
 function max_onClick() {
     var AeroWindow = this.parentNode.parentNode.parentNode;
@@ -54,7 +50,6 @@ function max_onClick() {
     else /*normal*/
     {
         AeroWindow.classList.remove('normal');
-        
         var pos =
             {
                 x: getStyle(AeroWindow, "left"),
@@ -75,16 +70,6 @@ function max_onClick() {
         content.style.height = getStyle(content, "max-height");
     }
 }
-function ifram_OnloadedLoadtitleAndicon()
-{
-    var AeroWindow = this.parentNode;
-    var ctrl = getWinCtrlByHwnd(AeroWindow.dataset.handle);
-
-    ctrl.setTitles(this.contentWindow.document.title);
-    var link = this.contentWindow.document.querySelector("link[rel*='icon']") || document.createElement('link');
-    
-    ctrl.icon = link.href;
-}
 function close_onClick() {
     var AeroGlass = this.parentNode.parentNode.parentNode;
     for (var key in WindowList)
@@ -102,10 +87,16 @@ function close_onClick() {
         }
     }
 }
+function dragbar_onDbclick()
+{
+    var WindowCtrl = GetAncenstorAeroWindowCtrl(this);
+    WindowCtrl.max();
+}
 function new_dragBar() {
     var DragBar = document.createElement("div");
     DragBar.style.width = "100 %";
     DragBar.classList.add("dragbar");
+    DragBar.addEventListener("dblclick", dragbar_onDbclick);
     return DragBar;
 }
 function new_icon(icon) {
@@ -128,12 +119,12 @@ function new_Control(name/*min max...*/, text/*_口X*/, click/*function*/)
     newCtrl.innerText = text;
     return newCtrl;
 }
-function new_Controlbox(style/*binary to express min max close (1/0) from 0 to 7 can also unsing 0bXXX*/)
+function new_Controlbox(style)
 {
+    if (!isset(style)) style = '111';
     var newControlBox = document.createElement("div");
     newControlBox.classList = "control_box";
-    if (!isset(style)) style = 0b111;
-   style = style.toString(2);
+    
    if (style[0] == '1') 
        newControlBox.appendChild(new_Control("min", "_", min_onClick));
    if (style[1] == '1') 
@@ -142,30 +133,34 @@ function new_Controlbox(style/*binary to express min max close (1/0) from 0 to 7
        newControlBox.appendChild(new_Control("close", "X", close_onClick));
     return newControlBox;
 }
-function new_Content(src)
+function new_Content(type)
 {
-    var newContent=document.createElement("div");
+    var newContent = document.createElement(type);
     newContent.classList.add("content");
+    return newContent;
+}
+function new_ContentA(src)
+{
+    var newContent = new_Content("div");
     /*get content*/
     GETRequest(src, function (xmlhttps) {
         newContent.innerHTML = xmlhttps.responseText;
     });
     return newContent;
 }
-function new_Iframe(src)
+function new_ContentI(src)
 {
-    var newIframe = document.createElement("iframe");
+    var newIframe = new_Content("iframe");
     newIframe.src = src;
-    newIframe.classList.add("content");
-    
-    if (newIframe.attachEvent) 
+    newIframe.frameborder = 0;
+   /* if (newIframe.attachEvent) 
         newIframe.attachEvent("onload", ifram_OnloadedLoadtitleAndicon);
      else 
-        newIframe.onload = ifram_OnloadedLoadtitleAndicon;
+        newIframe.onload = ifram_OnloadedLoadtitleAndicon;*/
     
     return newIframe;
 }
-function create_windowFrame(content_src, title, icon, style/*using binary to express min max close(1/0) 0~7*/, x, y,father)
+function create_windowFrame( title, icon, style, x, y,father)
 {
     /*Create Window Frame*/
     var newWindow = document.createElement("div");
@@ -210,14 +205,20 @@ function createWorkbaritem(AeroWindow)
     WorkBarItme.appendChild(text);
     WorkBarItme.addEventListener("mousedown", function ()
     {
-        AeroWindow.getElementsByClassName('min')[0].click();
+        var WindowCtrl = GetWindowCtrlByWindow(AeroWindow);
+        if (WindowCtrl.IsState('min'))
+            WindowCtrl.deMin();
+        else if (WindowCtrl.IsState('active'))
+            WindowCtrl.min();
+        else
+            Active(AeroWindow);
     }
     );
     return WorkBarItme;
 }
-function createWindowCommon(content_src,  title, icon, style, x, y, father) {
+function createWindowCommon(  title, icon, style, x, y, father) {
     /*frame of Window*/
-    var newWindow = create_windowFrame(content_src, title, icon, style, x, y, father);
+    var newWindow = create_windowFrame( title, icon, style, x, y, father);
     var workBarItem = createWorkbaritem(newWindow);
     document.getElementsByClassName('WorkBar')[0].appendChild(workBarItem);
     /*Window List*/
@@ -225,50 +226,109 @@ function createWindowCommon(content_src,  title, icon, style, x, y, father) {
     Active(newWindow);
     return newWindow;
 }
-function createAeroWindowI(content_src, title, icon, style/*using binary to express min max close(1/0) 0~7*/, x, y, father) {
-    var newWindow = createWindowCommon(content_src, title, icon, style, x, y, father);
-    /*content*/
-    var newContent = new_Iframe(content_src);
-    newWindow.appendChild(newContent);
+function createAeroWindowO(contentObj, title, icon, style/*using binary string to express min max close(1/0) */, x, y, father)
+{/*create Window by DomElementObject*/
+    var newWindow = createWindowCommon(title, icon, style, x, y, father);
+    newWindow.appendChild(contentObj);
     setWindowMaxWH(newWindow);
-    newWindow.appendChild(newContent);
-    
+    return newWindow;
 }
-function createAeroWindowA(content_src, title,  icon,style/*using binary to express min max close(1/0) 0~7*/, x, y, father) {/*Window*/
-    var newWindow = createWindowCommon(content_src, title, icon, style, x, y, father);
-    var newContent = new_Content(content_src);
-    newWindow.appendChild(newContent);
-    setWindowMaxWH(newWindow);
+function createAeroWindowS(contentstring, title, icon, style, x, y, father)
+{/*create Window by string*/
+    var content = new_Content('div');
+    content.innerText = contentstring;
+    var newWindow = createAeroWindowO(content, title, icon, style, x, y, father);
+    return newWindow;
 }
-function createDesktopIcon(src,txt,style,x,y,trg,icon,desktop,father)
+function createAeroWindowI(content_src, title, icon, style, x, y, father)
+{/*create Window by Iframe and source from src*/
+    var newContent = new_ContentI(content_src);
+    var newWindow = createAeroWindowO(newContent, title, icon, style, x, y, father);
+    return newWindow;
+}
+function createAeroWindowA(content_src, title, icon, style, x, y, father)
+{/*create Window by Ajax and soucrce from src*/
+    var newContent = new_ContentA(content_src);
+    var newWindow = createAeroWindowO(newContent, title, icon, style, x, y, father);
+    return newWindow;
+}
+function createFullAeroWindowA(content_src, title, icon, style, x, y, father)
+{/*create full Aero Window by Ajax and source from src*/
+    var newWindow = createAeroWindowA(content_src, title, icon, style/*using binary to express min max close(1/0) 0~7*/, x, y, father)
+    newWindow.getElementsByClassName('content')[0].classList.add('Aero');
+    return newWindow;
+}
+function createFullAeroWindowI(content_src, title, icon, style, x, y, father)
+{/*create full Aero Window by Iframe and source from src*/
+    var newWindow = createAeroWindowI(content_src, title, icon, style, x, y, father)
+    newWindow.getElementsByClassName('content')[0].classList.add('Aero');
+    return newWindow;
+}
+function alertAero(content,title,icon,style,x,y,father)
+{/*create alert Window */
+    if (!isset(style)) style = '001';
+    if (!isset(title)) title = 'alert';
+    var newWindow = createAeroWindowS(content, title, icon, style, x, y, father);
+    var okbtn = document.createElement("button");
+    okbtn.innerText = "ok";
+    okbtn.classList.add("alertok");
+    var content = newWindow.getElementsByClassName('content')[0].appendChild(okbtn);
+    okbtn.addEventListener("click", function () {
+        GetAncenstorAeroWindow(this).getElementsByClassName('close')[0].click();
+    })
+    return newWindow;
+}
+function alertFullAero(content, title, icon, style, x, y, father)
+{/*create full aero alert Window */
+    var newWindow = alertAero(content, title, icon, style, x, y, father);
+    newWindow.getElementsByClassName('content')[0].classList.add('Aero');
+    return newWindow;
+}
+function new_desktopIcon(src, txt, style, x, y, trg, icon, father)
 {
     var dskicon = document.createElement('div');
     dskicon.classList.add('icon');
-    if (!isset(trg))
-        dskicon.addEventListener("dblclick", function () { createAeroWindowA(src, txt,icon, style, x, y, father) });
+    if (!isset(trg)) {
+        dskicon.addEventListener("dblclick", function () { createAeroWindowA(src, txt, icon, style, x, y, father) });
+        dskicon.addEventListener("touchstart", function () { createAeroWindowA(src, txt, icon, style, x, y, father) });
+    }
     else
-        switch (trg)
-        {
+        switch (trg) {
             case 'iframe':
-                dskicon.addEventListener("dblclick", function () { createAeroWindowI(src, txt,icon, style, x, y, father) });
+                dskicon.addEventListener("dblclick", function () { createAeroWindowI(src, txt, icon, style, x, y, father) });
+                dskicon.addEventListener("touchstart", function () { createAeroWindowA(src, txt, icon, style, x, y, father) });
                 break;
         }
+    var img = document.createElement('img');
+    img.src = (icon) ? icon : emptyIcon;
+    dskicon.appendChild(img);
+    var text = document.createElement('div');
+    text.innerText = txt;
+    text.classList.add('text');
+    dskicon.appendChild(text);
+    return dskicon;
+}
+function createDesktopIcon(src,txt,style,x,y,trg,icon,desktop,father)
+{
+    var dskicon = new_desktopIcon(src, txt, style, x, y, trg, icon, father);
     if (!isset(desktop))
         document.querySelector(".desktop").appendChild(dskicon);
     else
         desktop.appendChild(dskicon);
-
-    var img = document.createElement('img');
-    img.src = (icon) ? icon : emptyIcon;
-
-    dskicon.appendChild(img);
-
-    var text = document.createElement('div');
-    text.innerText = txt;
-    text.classList.add('text');
-
-    dskicon.appendChild(text);
-
+    return dskicon;
 }
+function createDesktopIconD(iconDivObj)
+{
+    var newIcon = new_desktopIcon(iconDivObj.dataset.src, iconDivObj.innerText, iconDivObj.dataset.style, iconDivObj.dataset.x, iconDivObj.dataset.y, iconDivObj.dataset.target, iconDivObj.dataset.icon, iconDivObj.dataset.father);
+    iconDivObj.parentNode.replaceChild(newIcon, iconDivObj);
+    return newIcon;
+}
+function replaceAllDesktopIcon()
+{
+    var dskicons = document.querySelectorAll(".desktop .icon")
+    for (var i = 0; i < dskicons.length;i++)
+        createDesktopIconD(dskicons[i]);
+}
+replaceAllDesktopIcon();
 setAllWindowMaxWH();
-window.onresize = setAllWindowMaxWH;
+document.body.onresize = setAllWindowMaxWH;

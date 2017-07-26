@@ -10,10 +10,11 @@
 .icon > img 
 {
     height: 64px;
-    
+    user-select:none;
 }
-    .icon > .text {
-        color: white;
-        text-shadow: 0 0 1px black,0 0 2px black,0 0 4px black;
-        text-align: center;
-    }
+.icon > .text {
+    color: white;
+    text-shadow: 0 0 1px black,0 0 2px black,0 0 4px black;
+    text-align: center;
+    cursor:default;
+}

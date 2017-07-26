@@ -9,15 +9,7 @@ var dragbarClassName = "dragbar";
 var containerClassName = "container";
 var tempindex ;
 tempindex = 0;
-function removeAllActive()
-{
-    Array.from(document.getElementsByClassName("active")).forEach
-        (function (ele, ind, arr)
-        {
-            ele.classList.remove("active");
-        }
-        );
-}
+
 function addMouseUp(element)
 {
     element.addEventListener("mouseup", function ()
@@ -47,20 +39,7 @@ function addMouseMove(element)
     }
     );
 }
-function Active(AeroGlass)
-{
-    removeAllActive();
-    getWinCtrlByHwnd(AeroGlass.dataset.handle).ExecuteObj.WorkbarItem.classList.add('active');
-    AeroGlass.classList.add("active");
-    tempindex = getStyle(AeroGlass, 'z-index');
-    AeroGlass.style.zIndex = maxzindex;
-    Array.from(document.getElementsByClassName("AeroGlass")).forEach
-        (function (ele, ind, arr) {
-            if (getStyle(ele, "z-index") > tempindex)
-                ele.style.zIndex--;
-        }
-        );
-}
+
 function addMouseDown(element,AeroGlass)
 {
     element.addEventListener("mousedown", function () {
